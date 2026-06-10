@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>틱택토 게임</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        .cell {
+            background: white;
+            border: 2px solid #333;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .cell.taken {
+            cursor: not-allowed;
+        }
+        #message {
+            font-size: 1.2em;
+            margin-top: 15px;
+        }
+        #reset {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>틱택토 게임</h1>
+    <div id="board"></div>
+    <div id="message">X 차례!</div>
+    <button id="reset">다시 시작</button>
+
+    <script>
+        const board = document.getElementById("board");
+        const message = document.getElementById("message");
+        const resetBtn = document.getElementById("reset");
+        let currentPlayer = "X";
+        let cells = [];
+
+        // 보드 초기화
+        function initBoard() {
+            board.innerHTML = "";
+            cells = [];
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = i + 1; // 번호 표시
+                cell.addEventListener("click", () => makeMove(cell, i));
+                board.appendChild(cell);
+                cells.push(cell);
+            }
+            currentPlayer = "X";
+            message.textContent = currentPlayer + " 차례!";
+        }
+
+        // 승리 조건 확인
+        function checkWinner(player) {
+            const winConditions = [
+                [0,1,2], [3,4,5], [6,7,8], // 가로
+                [0,3,6], [1,4,7], [2,5,8], // 세로
+                [0,4,8], [2,4,6]           // 대각선
+            ];
+            return winConditions.some(condition =>
+                condition.every(index => cells[index].textContent === player)
+            );
+        }
+
+        // 턴 진행
+        function makeMove(cell, index) {
+            if (cell.classList.contains("taken")) return;
+            cell.textContent = currentPlayer;
+            cell.classList.add("taken");
+
+            if (checkWinner(currentPlayer)) {
+                message.textContent = currentPlayer + " 승리!";
+                cells.forEach(c => c.classList.add("taken")); // 게임 종료
+                return;
+            }
+
+            if (cells.every(c => c.classList.contains("taken"))) {
+                message.textContent = "무승부!";
+                return;
+            }
+
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
+            message.textContent = currentPlayer + " 차례!";
+        }
+
+        resetBtn.addEventListener("click", initBoard);
+
+        initBoard();
+    </script>
+</body>
+</html>
