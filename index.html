@@ -36,7 +36,7 @@
             font-size: 1.2em;
             margin-top: 15px;
         }
-        #reset, #modeSelect {
+        #reset {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 1em;
@@ -46,10 +46,6 @@
 </head>
 <body>
     <h1>틱택토 게임</h1>
-    <select id="modeSelect">
-        <option value="pvp">플레이어 vs 플레이어</option>
-        <option value="cpu">플레이어 vs 컴퓨터</option>
-    </select>
     <div id="board"></div>
     <div id="message">X 차례!</div>
     <button id="reset">다시 시작</button>
@@ -58,10 +54,8 @@
         const board = document.getElementById("board");
         const message = document.getElementById("message");
         const resetBtn = document.getElementById("reset");
-        const modeSelect = document.getElementById("modeSelect");
         let currentPlayer = "X";
         let cells = [];
-        let mode = "pvp"; // 기본 모드
 
         // 보드 초기화
         function initBoard() {
@@ -108,49 +102,13 @@
                 return;
             }
 
-            if (mode === "pvp") {
-                currentPlayer = currentPlayer === "X" ? "O" : "X";
-                message.textContent = currentPlayer + " 차례!";
-            } else if (mode === "cpu") {
-                if (currentPlayer === "X") {
-                    currentPlayer = "O";
-                    cpuMove();
-                } else {
-                    currentPlayer = "X";
-                    message.textContent = currentPlayer + " 차례!";
-                }
-            }
-        }
-
-        // 컴퓨터 랜덤 선택
-        function cpuMove() {
-            let available = cells.filter(c => !c.classList.contains("taken"));
-            if (available.length === 0) return;
-            let choice = available[Math.floor(Math.random() * available.length)];
-            choice.textContent = currentPlayer;
-            choice.classList.add("taken");
-
-            if (checkWinner(currentPlayer)) {
-                message.textContent = "컴퓨터(O) 승리!";
-                cells.forEach(c => c.classList.add("taken"));
-                return;
-            }
-
-            if (cells.every(c => c.classList.contains("taken"))) {
-                message.textContent = "무승부!";
-                return;
-            }
-
-            currentPlayer = "X";
+            currentPlayer = currentPlayer === "X" ? "O" : "X";
             message.textContent = currentPlayer + " 차례!";
         }
 
         resetBtn.addEventListener("click", initBoard);
-        modeSelect.addEventListener("change", () => {
-            mode = modeSelect.value;
-            initBoard();
-        });
 
         initBoard();
     </script>
 </body>
+</html>
